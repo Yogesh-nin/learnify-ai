@@ -11,9 +11,16 @@ const isPublicApiRoute = createRouteMatcher([
   "/api/create-user(.*)",
 ]);
 
+const isProtectedApiRoute = createRouteMatcher([
+  "/api/courses(.*)",
+  "/api/study-type(.*)",
+  "/api/study-type-content(.*)",
+  "/api/generate-course-outline(.*)",
+]);
+
 export default clerkMiddleware(async (auth, req) => {
   if (isPublicApiRoute(req)) return;
-  if (isProtectedRoute(req)) await auth.protect();
+  if (isProtectedRoute(req) || isProtectedApiRoute(req)) await auth.protect();
 });
 
 export const config = {

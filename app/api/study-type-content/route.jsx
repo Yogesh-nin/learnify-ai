@@ -7,6 +7,7 @@ import {
 } from "/configs/AiModel";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { assertCourseOwner } from "/lib/courseAccess";
 
 export async function POST(req) {
   try {
@@ -18,6 +19,9 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
+    const denied = await assertCourseOwner(courseId);
+    if (denied) return denied;
 
     const PROMPT =
       type === "Flashcard"

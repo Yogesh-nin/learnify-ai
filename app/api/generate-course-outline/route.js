@@ -9,6 +9,7 @@ import {
   parseAiJson,
 } from "/lib/courseLayout";
 import { generateChapterNotesForCourse } from "/lib/generateChapterNotes";
+import { getAuthenticatedUserEmail } from "/lib/courseAccess";
 
 /** Production: Inngest Cloud. Local dev: Next.js after() (no Inngest CLI required). */
 function shouldUseInngestWorker() {
@@ -56,14 +57,18 @@ Rules:
 
 export async function POST(req) {
   try {
-    const { courseId, topic, courseType, difficultyLevel, createdBy } =
-      await req.json();
+    const { courseId, topic, courseType, difficultyLevel } = await req.json();
 
-    if (!courseId || !topic || !courseType || !createdBy) {
+    if (!courseId || !topic || !courseType) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
+    }
+
+    const createdBy = await getAuthenticatedUserEmail();
+    if (!createdBy) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const level = difficultyLevel || "Medium";

@@ -3,6 +3,7 @@ import { db } from "/configs/db";
 import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { STUDY_TYPE_CONTENT_TABLE } from "../../../configs/schema";
+import { assertCourseOwner } from "/lib/courseAccess";
 
 export async function POST(req) {
   try {
@@ -15,6 +16,9 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
+    const denied = await assertCourseOwner(courseId);
+    if (denied) return denied;
 
     console.log("Incoming Data:", { courseId, studyType });
 

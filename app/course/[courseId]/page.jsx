@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import DashboardHeader from "../../dashboard/_components/DashboardHeader";
 import axios from "axios";
@@ -10,15 +10,21 @@ import ChapterList from "./_components/ChapterList";
 
 function Course() {
   const { courseId } = useParams();
+  const router = useRouter();
   const [courseData, setCourseData] = useState(null);
   const [error, setError] = useState(null);
 
   const GetCourse = async () => {
     try {
       const result = await axios.get(`/api/courses?courseId=${courseId}`);
-      console.log(result.data.result); // Log the response
       setCourseData(result.data.result);
     } catch (err) {
+      const status = err.response?.status;
+      if (status === 404 || status === 401) {
+        setError("This course does not exist or you do not have access to it.");
+        router.replace("/dashboard");
+        return;
+      }
       console.error("Error fetching course:", err.message);
       setError("Failed to load course data.");
     }

@@ -26,8 +26,8 @@ function SideBar({ onClose }: SideBarProps) {
     <div className="h-screen shadow-md p-5 flex flex-col bg-surface">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
-          <img src="/logo.svg" alt="logo" width={40} height={40} />
-          <h2 className="font-bold text-2xl">TutorAi</h2>
+          <img src="/logo-main.png" alt="logo" width={40} height={40} />
+          <h2 className="font-bold text-2xl">Learnify</h2>
         </div>
         {onClose && (
           <button onClick={onClose} className="md:hidden p-1 hover:bg-surface-muted rounded-lg">

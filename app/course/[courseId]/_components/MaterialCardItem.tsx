@@ -26,7 +26,11 @@ function MaterialCardItem({ item, studyTypeContent, course, refreshData }) {
     }
   };
 
+  // Chapter notes are created with the course — no separate generate step
+  const isNotesType = item.type === "notes";
+
   const isContentGenerated =
+    isNotesType ||
     contentGenerated ||
     (getCurrentTypeContent() !== null && getCurrentTypeContent() > 0);
 
@@ -91,6 +95,8 @@ function MaterialCardItem({ item, studyTypeContent, course, refreshData }) {
   // Generate content for the material type
   const GenerateContent = async (e) => {
     e.preventDefault();
+
+    if (isNotesType) return;
 
     // Get chapters for the course
     const chapters = getChapters();

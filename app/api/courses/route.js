@@ -1,8 +1,12 @@
 import { db } from "/configs/db";
 import { STUDY_MATERIAL_TABLE, CHAPTER_NOTES_TABLE, STUDY_TYPE_CONTENT_TABLE } from "/configs/schema";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { normalizeCourseLayout } from "/lib/courseLayout";
+import {
+  getAuthenticatedUserEmail,
+  getOwnedCourse,
+} from "/lib/courseAccess";
 
 function withNormalizedLayout(course) {
   if (!course?.courseLayout) return course;
@@ -21,19 +25,15 @@ function withNormalizedLayout(course) {
 
 export async function POST(req) {
   try {
-    const { createdBy } = await req.json();
-
-    if (!createdBy) {
-      return NextResponse.json(
-        { error: "The 'createdBy' field is required." },
-        { status: 400 }
-      );
+    const email = await getAuthenticatedUserEmail();
+    if (!email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const result = await db
       .select()
       .from(STUDY_MATERIAL_TABLE)
-      .where(eq(STUDY_MATERIAL_TABLE.createdBy, createdBy))
+      .where(eq(STUDY_MATERIAL_TABLE.createdBy, email))
       .orderBy(desc(STUDY_MATERIAL_TABLE.id))
 
     return NextResponse.json({
@@ -61,16 +61,12 @@ export async function GET(req) {
       );
     }
 
-    const result = await db
-      .select()
-      .from(STUDY_MATERIAL_TABLE)
-      .where(eq(STUDY_MATERIAL_TABLE.courseId, courseId));
+    const owned = await getOwnedCourse(courseId);
+    if (owned.error) return owned.error;
 
-    if (result.length === 0) {
-      return NextResponse.json({ error: "Course not found." }, { status: 404 });
-    }
-
-    return NextResponse.json({ result: withNormalizedLayout(result[0]) });
+    return NextResponse.json({
+      result: withNormalizedLayout(owned.course),
+    });
   } catch (error) {
     console.error("Error fetching course:", error);
     return NextResponse.json(
@@ -93,12 +89,22 @@ export async function DELETE(req) {
       );
     }
 
+    const owned = await getOwnedCourse(courseId);
+    if (owned.error) return owned.error;
+
     // Delete child rows first (Inngest notes.generate inserts chapterNotes per chapter)
     await db.delete(CHAPTER_NOTES_TABLE).where(eq(CHAPTER_NOTES_TABLE.courseId, courseId));
     await db.delete(STUDY_TYPE_CONTENT_TABLE).where(eq(STUDY_TYPE_CONTENT_TABLE.courseId, courseId));
-    
-    // Delete the course itself
-    const result = await db.delete(STUDY_MATERIAL_TABLE).where(eq(STUDY_MATERIAL_TABLE.courseId, courseId)).returning();
+
+    const result = await db
+      .delete(STUDY_MATERIAL_TABLE)
+      .where(
+        and(
+          eq(STUDY_MATERIAL_TABLE.courseId, courseId),
+          eq(STUDY_MATERIAL_TABLE.createdBy, owned.email)
+        )
+      )
+      .returning();
 
     if (result.length === 0) {
       return NextResponse.json({ error: "Course not found." }, { status: 404 });
