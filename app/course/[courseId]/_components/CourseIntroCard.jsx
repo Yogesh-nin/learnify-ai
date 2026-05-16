@@ -13,16 +13,16 @@ function CourseIntroCard({ course }) {
           className="mb-4"
         />
         <h2 className="text-xs text-blue-600 font-semibold">
-          Total Chapters: {course.courseLayout.chapters.length}
+          Total Chapters: {course?.courseLayout?.chapters?.length ?? 0}
         </h2>
       </div>
 
       <div className="flex flex-col justify-between">
         <h2 className="font-bold text-xl text-gray-800">
-          {course.courseLayout.courseTitle}
+          {course?.courseLayout?.courseTitle ?? "Untitled Course"}
         </h2>
         <p className="text-gray-600 text-sm mt-2">
-          {course.courseLayout.courseSummary}
+          {course?.courseLayout?.courseSummary ?? ""}
         </p>
       </div>
     </div>

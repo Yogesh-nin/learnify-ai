@@ -32,13 +32,13 @@ function CourseCardItem({ course }) {
                 className="mr-4"
               />
               <h2 className="text-lg font-semibold">
-                {course.courseLayout.courseTitle}
+                {course.courseLayout?.courseTitle ?? "Untitled Course"}
               </h2>
             </div>
 
             <div className="text-sm mt-3 text-gray-600 bg-[#ededed] py-5 px-3 rounded-lg">
               <p className="line-clamp-4">
-                {course.courseLayout.courseSummary}
+                {course.courseLayout?.courseSummary ?? ""}
               </p>
             </div>
           </div>
@@ -48,6 +48,8 @@ function CourseCardItem({ course }) {
               <div className="flex justify-center items-center">
                 <Loader />
               </div>
+            ) : course.status === "Failed" ? (
+              <p className="text-sm text-red-500">Generation failed — delete and recreate</p>
             ) : (
               <>
                 <Link href={`course/${course.courseId}`}>

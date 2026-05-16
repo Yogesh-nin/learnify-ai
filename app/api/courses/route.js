@@ -2,6 +2,22 @@ import { db } from "/configs/db";
 import { STUDY_MATERIAL_TABLE, CHAPTER_NOTES_TABLE, STUDY_TYPE_CONTENT_TABLE } from "/configs/schema";
 import { desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { normalizeCourseLayout } from "/lib/courseLayout";
+
+function withNormalizedLayout(course) {
+  if (!course?.courseLayout) return course;
+  try {
+    return {
+      ...course,
+      courseLayout: normalizeCourseLayout(course.courseLayout, {
+        topic: course.topic,
+        difficultyLevel: course.difficultyLevel,
+      }),
+    };
+  } catch {
+    return course;
+  }
+}
 
 export async function POST(req) {
   try {
@@ -20,7 +36,9 @@ export async function POST(req) {
       .where(eq(STUDY_MATERIAL_TABLE.createdBy, createdBy))
       .orderBy(desc(STUDY_MATERIAL_TABLE.id))
 
-    return NextResponse.json({ result: result });
+    return NextResponse.json({
+      result: result.map(withNormalizedLayout),
+    });
   } catch (error) {
     console.error("Error fetching courses:", error);
     return NextResponse.json(
@@ -52,7 +70,7 @@ export async function GET(req) {
       return NextResponse.json({ error: "Course not found." }, { status: 404 });
     }
 
-    return NextResponse.json({ result: result[0] });
+    return NextResponse.json({ result: withNormalizedLayout(result[0]) });
   } catch (error) {
     console.error("Error fetching course:", error);
     return NextResponse.json(

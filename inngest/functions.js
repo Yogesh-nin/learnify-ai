@@ -13,6 +13,7 @@ import {
   GenerateStudyTypeContentAiModel,
 } from "../configs/AiModel";
 import { eq } from "drizzle-orm";
+import { normalizeCourseLayout } from "../lib/courseLayout";
 
 // Function to test the "hello-world" event
 export const helloWorld = inngest.createFunction(
@@ -66,12 +67,37 @@ export const GenerateNotes = inngest.createFunction(
   { event: "notes.generate" },
   async ({ event, step }) => {
     const { course } = event.data;
+    const courseId = course.courseId;
+
+    const markStatus = async (status) => {
+      await db
+        .update(STUDY_MATERIAL_TABLE)
+        .set({ status })
+        .where(eq(STUDY_MATERIAL_TABLE.courseId, courseId));
+    };
 
     try {
+      const layout = await step.run("Normalize course layout", async () => {
+        const normalized = normalizeCourseLayout(course.courseLayout, {
+          topic: course.topic,
+          difficultyLevel: course.difficultyLevel,
+        });
+
+        await db
+          .update(STUDY_MATERIAL_TABLE)
+          .set({ courseLayout: normalized })
+          .where(eq(STUDY_MATERIAL_TABLE.courseId, courseId));
+
+        return normalized;
+      });
+
+      const chapters = layout.chapters;
+      if (!chapters?.length) {
+        throw new Error("No chapters found in course layout");
+      }
+
       // Generate notes for each chapter
       const notesResult = await step.run("Generate Chapter Notes", async () => {
-        const chapters = course.courseLayout.chapters;
-
         const chapterPromises = chapters.map(async (chapter, index) => {
           const PROMPT = `Generate a JSON object that represents study notes for a course chapter. The JSON should meet the following requirements:
 0. Provided Chapters:
@@ -159,34 +185,47 @@ Give me in .md format
           // Insert the generated notes into the database
           await db.insert(CHAPTER_NOTES_TABLE).values({
             chapterId: index,
-            courseId: course.courseId,
-            notes: typeof parsedNotes === "string" ? parsedNotes : JSON.stringify(parsedNotes),
+            courseId,
+            notes:
+              typeof parsedNotes === "string"
+                ? parsedNotes
+                : JSON.stringify(parsedNotes),
           });
         });
 
-        // Wait for all chapter notes to be processed
-        await Promise.all(chapterPromises);
-        return "Chapter Notes Generated";
+        const results = await Promise.allSettled(chapterPromises);
+        const failed = results.filter((r) => r.status === "rejected");
+        if (failed.length) {
+          failed.forEach((r) =>
+            console.error("Chapter notes generation failed:", r.reason)
+          );
+        }
+        if (failed.length === results.length) {
+          throw new Error("Failed to generate notes for all chapters");
+        }
+
+        return {
+          message: "Chapter Notes Generated",
+          succeeded: results.length - failed.length,
+          failed: failed.length,
+        };
       });
 
-      // Update course status to "Ready"
       const updateCourseStatusResult = await step.run(
         "Update Course Status to Ready",
         async () => {
-          await db
-            .update(STUDY_MATERIAL_TABLE)
-            .set({ status: "Ready" })
-            .where(eq(STUDY_MATERIAL_TABLE.courseId, course.courseId));
+          await markStatus("Ready");
           return "Course Status Updated to Ready";
         }
       );
 
-      // Return the combined results
       return { notesResult, updateCourseStatusResult };
     } catch (error) {
-      // Log and rethrow any errors
       console.error("Error during GenerateNotes function execution:", error);
-      throw new Error("An error occurred while generating course notes");
+      await step.run("Mark course as failed", async () => {
+        await markStatus("Failed");
+      });
+      throw error;
     }
   }
 );
