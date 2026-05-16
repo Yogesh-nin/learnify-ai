@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { inngest } from "/inngest/client";
 import { generateCourseOutline } from "/configs/generateCourseOutline";
 import { db } from "/configs/db";
@@ -7,6 +8,15 @@ import {
   normalizeCourseLayout,
   parseAiJson,
 } from "/lib/courseLayout";
+import { generateChapterNotesForCourse } from "/lib/generateChapterNotes";
+
+/** Production: Inngest Cloud. Local dev: Next.js after() (no Inngest CLI required). */
+function shouldUseInngestWorker() {
+  return (
+    process.env.NODE_ENV === "production" ||
+    process.env.INNGEST_FORCE === "1"
+  );
+}
 function buildCourseOutlinePrompt({ topic, courseType, difficultyLevel }) {
   return `Generate a single JSON OBJECT (NOT an array) for a complete study course.
 
@@ -93,10 +103,24 @@ export async function POST(req) {
 
     const course = dbResult[0];
 
-    await inngest.send({
-      name: "notes.generate",
-      data: { course },
-    });
+    if (shouldUseInngestWorker()) {
+      const { ids } = await inngest.send({
+        name: "notes.generate",
+        data: { course },
+      });
+      console.log("[course-create] Queued Inngest job:", ids);
+    } else {
+      after(async () => {
+        try {
+          await generateChapterNotesForCourse(course);
+        } catch (err) {
+          console.error("[course-create] Background chapter notes failed:", err);
+        }
+      });
+      console.log(
+        "[course-create] Chapter notes scheduled in-process (local dev)"
+      );
+    }
 
     return NextResponse.json({ result: course });
   } catch (error) {

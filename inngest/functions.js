@@ -1,19 +1,19 @@
 import {
-  CHAPTER_NOTES_TABLE,
-  STUDY_MATERIAL_TABLE,
   STUDY_TYPE_CONTENT_TABLE,
   USER_TABLE,
 } from "../configs/schema";
 import { db } from "../configs/db";
 import { inngest } from "./client";
 import {
-  generateNotesAiModel,
   GenerateQaAiModel,
   GenerateQuizAiModel,
   GenerateStudyTypeContentAiModel,
 } from "../configs/AiModel";
 import { eq } from "drizzle-orm";
-import { normalizeCourseLayout } from "../lib/courseLayout";
+import {
+  generateChapterNotesForCourse,
+  setCourseStatus,
+} from "../lib/generateChapterNotes";
 
 // Function to test the "hello-world" event
 export const helloWorld = inngest.createFunction(
@@ -67,164 +67,20 @@ export const GenerateNotes = inngest.createFunction(
   { event: "notes.generate" },
   async ({ event, step }) => {
     const { course } = event.data;
-    const courseId = course.courseId;
-
-    const markStatus = async (status) => {
-      await db
-        .update(STUDY_MATERIAL_TABLE)
-        .set({ status })
-        .where(eq(STUDY_MATERIAL_TABLE.courseId, courseId));
-    };
+    const courseId = course?.courseId;
 
     try {
-      const layout = await step.run("Normalize course layout", async () => {
-        const normalized = normalizeCourseLayout(course.courseLayout, {
-          topic: course.topic,
-          difficultyLevel: course.difficultyLevel,
-        });
-
-        await db
-          .update(STUDY_MATERIAL_TABLE)
-          .set({ courseLayout: normalized })
-          .where(eq(STUDY_MATERIAL_TABLE.courseId, courseId));
-
-        return normalized;
-      });
-
-      const chapters = layout.chapters;
-      if (!chapters?.length) {
-        throw new Error("No chapters found in course layout");
-      }
-
-      // Generate notes for each chapter
-      const notesResult = await step.run("Generate Chapter Notes", async () => {
-        const chapterPromises = chapters.map(async (chapter, index) => {
-          const PROMPT = `Generate a JSON object that represents study notes for a course chapter. The JSON should meet the following requirements:
-0. Provided Chapters:
-${JSON.stringify(chapter)}
-
-
-1. Structure:
-The JSON must include the following fields:
-chapterTitle: The title of the chapter.
-chapterSummary: A brief summary of the chapter.
-emoji: A relevant emoji to visually represent the chapter.
-topics: A list of topics covered in the chapter. Each topic must be an object with:
-topicTitle (string): The title of the topic.
-content (string): Detailed content for the topic written in Md format, and ready for rendering in a React.js component.
-
-OUTPUT SHOULD BE LIKE : 
-{
-  "chapterTitle": "WordPress Fundamentals",
-  "chapterSummary": "Introduction to WordPress, its architecture, core components, and installation process.",
-  "emoji": "🌱",
-  "topics": [
-    {
-      "topicTitle": "What is WordPress?",
-      "content": "# What is WordPress? 🤔\n\nWordPress is a free and open-source content management system (CMS) used to build and manage websites and blogs. Its popularity stems from its user-friendly interface, extensive plugin ecosystem, and robust theme customization options. \n\n**Key Features:**\n\n* **Ease of Use:**  Intuitive interface, making it accessible to beginners and experts alike.\n* **Flexibility:**  Highly adaptable to various website needs through themes and plugins.\n* **Extensibility:** Thousands of plugins add functionality, extending core capabilities.\n* **SEO-Friendly:** Built-in features aid search engine optimization.\n* **Large Community:**  Extensive support network provides assistance and resources.\n\n**WordPress Editions:**\n\n* **WordPress.org (Self-hosted):**  You control hosting, offering maximum flexibility and customization. Requires technical setup.\n* **WordPress.com (Hosted):**  WordPress handles hosting, simplifying setup but limiting customization options."
-    },
-    {
-      "topicTitle": "WordPress Architecture",
-      "content": "# WordPress Architecture ⚙️\n\nWordPress follows a three-tier architecture:\n\n1. **Presentation Layer (Frontend):**  The user interface; what visitors see.  Managed primarily by themes.\n2. **Application Layer:** The core WordPress engine, processing requests, database interactions, and plugin execution.\n3. **Data Layer:**  The MySQL database storing content, settings, users, and other website data.\n\n**Key Components:**\n\n* **Core Files:** The fundamental WordPress files responsible for core functionality.\n* **Database (MySQL):** Stores all website information.\n* **Themes:** Control the website's visual presentation and layout.\n* **Plugins:** Extend functionality by adding features (e.g., contact forms, e-commerce).\n\n**Simplified Diagram:**\n\n  '\nUser --> Presentation Layer (Theme) --> Application Layer (Core + Plugins) --> Data Layer (Database)\n'"
-    },
-    {
-      "topicTitle": "Installation and Setup",
-      "content": "# Installation and Setup 💻\n\n**Prerequisites:**\n\n* **Web Hosting:**  A hosting provider supporting PHP, MySQL, and databases (e.g., Bluehost, SiteGround).\n* **Domain Name:** A registered domain name (e.g., 'yourwebsite.com').\n* **WordPress Files:** Download the latest version from wordpress.org.\n\n**Steps:**\n\n1. **Upload:** Upload the downloaded files to your web hosting account via FTP or your hosting control panel.\n2. **Database Creation:** Create a MySQL database and user account in your hosting control panel.\n3. **Configuration:**  During installation, provide database credentials (name, username, password, hostname).\n4. **Installation:** Follow the on-screen instructions in your browser to complete setup.\n5. **Initial Settings:** Set the site title, admin username and password, and other basic settings.\n\n**Troubleshooting:**\n\n* **Database Errors:** Double-check database credentials.\n* **Permission Issues:** Ensure correct file permissions on your server.\n* **Resource Limits:**  Check server resources (PHP memory limit)."
-    },
-    {
-      "topicTitle": "WordPress Dashboard Overview",
-      "content": "# WordPress Dashboard Overview 📊\n\nThe WordPress dashboard is the central administration interface. Key sections include:\n\n* **Dashboard:**  Displays recent activity, quick drafts, and notifications.\n* **Posts:** Manage blog posts (create, edit, publish, schedule).\n* **Pages:** Manage static pages (e.g., About Us, Contact).\n* **Media:** Upload and manage images, videos, and other media files.\n* **Appearance:** Customize themes and appearance.\n* **Plugins:** Install, activate, and manage plugins.\n* **Users:** Manage user accounts and roles.\n* **Settings:** Configure general website settings.\n\n**Navigation:**  Become familiar with the dashboard's layout for efficient website management. 📌"
-    },
-    {
-      "topicTitle": "Understanding WordPress Themes and Plugins",
-      "content": "# WordPress Themes and Plugins ✨\n\n**Themes:** Themes control the website's visual design and layout. \n\n* **Theme Selection:** Choose themes based on website purpose and design preferences.\n* **Customization:** Many themes offer options to customize colors, fonts, and layouts.\n* **Child Themes:**  Creating a child theme protects customizations when updating the parent theme.\n\n**Plugins:** Plugins extend WordPress functionality.\n\n* **Plugin Selection:** Choose reputable plugins from WordPress.org.\n* **Compatibility:**  Be mindful of plugin conflicts – test thoroughly before activating multiple plugins.\n* **Updates:** Regularly update plugins for security and bug fixes.\n\n**Examples:**\n\n* **Popular Themes:**  Astra, OceanWP, GeneratePress\n* **Popular Plugins:** Yoast SEO, WooCommerce, Akismet"
-    }
-  ]
-}
-
-
-2. Content Formatting:
-Give me in .md format
-
-
-**IMPORTANT**
-There should be an emoji
-Give me in .md format
-
-
-
- 7. **Additional Notes:**  
-   - **IMPORTANT** There should be an emoji
-   - Every Content should be in detail and explained properly
-   - Each 'content' field should use simple and concise language suitable for study notes.  
-   - Ensure that topics include clear definitions, key points, and, where appropriate, examples or sample code.  
-   - All generated content should be focused on clarity and exam preparation, with minimal redundancy.  
-
- 8. **Avoid Common Errors:**  
-   - Double-check for mismatched brackets, missing fields, or improperly formatted strings.  `;
-
-          // Generate notes using AI model
-          const result = await generateNotesAiModel.sendMessage(PROMPT);
-          let aiResp = await result.response.text();
-
-          // Strip markdown code fences if present (```json ... ``` or ``` ... ```)
-          aiResp = aiResp.trim();
-          if (aiResp.startsWith("```")) {
-            aiResp = aiResp.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
-          }
-
-          // Parse to JSON and store as object so the DB holds structured data
-          let parsedNotes;
-          try {
-            parsedNotes = JSON.parse(aiResp);
-          } catch (parseErr) {
-            console.error("Failed to parse AI notes response as JSON, storing raw text:", parseErr.message);
-            parsedNotes = aiResp; // fallback: store raw string
-          }
-
-          // Insert the generated notes into the database
-          await db.insert(CHAPTER_NOTES_TABLE).values({
-            chapterId: index,
-            courseId,
-            notes:
-              typeof parsedNotes === "string"
-                ? parsedNotes
-                : JSON.stringify(parsedNotes),
-          });
-        });
-
-        const results = await Promise.allSettled(chapterPromises);
-        const failed = results.filter((r) => r.status === "rejected");
-        if (failed.length) {
-          failed.forEach((r) =>
-            console.error("Chapter notes generation failed:", r.reason)
-          );
-        }
-        if (failed.length === results.length) {
-          throw new Error("Failed to generate notes for all chapters");
-        }
-
-        return {
-          message: "Chapter Notes Generated",
-          succeeded: results.length - failed.length,
-          failed: failed.length,
-        };
-      });
-
-      const updateCourseStatusResult = await step.run(
-        "Update Course Status to Ready",
-        async () => {
-          await markStatus("Ready");
-          return "Course Status Updated to Ready";
-        }
+      const notesResult = await step.run("Generate Chapter Notes", async () =>
+        generateChapterNotesForCourse(course)
       );
-
-      return { notesResult, updateCourseStatusResult };
+      return { notesResult };
     } catch (error) {
       console.error("Error during GenerateNotes function execution:", error);
-      await step.run("Mark course as failed", async () => {
-        await markStatus("Failed");
-      });
+      if (courseId) {
+        await step.run("Mark course as failed", async () => {
+          await setCourseStatus(courseId, "Failed");
+        });
+      }
       throw error;
     }
   }
