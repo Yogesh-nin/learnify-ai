@@ -56,6 +56,8 @@ function CourseCardItem({ course }) {
                   </button>
                 </Link>
 
+              </>
+            )}
                 <div className="relative group">
                   <button
                     onClick={() => setDeleteOpen(true)}
@@ -73,8 +75,6 @@ function CourseCardItem({ course }) {
                     Delete
                   </span>
                 </div>
-              </>
-            )}
           </div>
         </div>
       </div>

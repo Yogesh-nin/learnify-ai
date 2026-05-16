@@ -75,7 +75,7 @@ export async function DELETE(req) {
       );
     }
 
-    // Delete associated data first
+    // Delete child rows first (Inngest notes.generate inserts chapterNotes per chapter)
     await db.delete(CHAPTER_NOTES_TABLE).where(eq(CHAPTER_NOTES_TABLE.courseId, courseId));
     await db.delete(STUDY_TYPE_CONTENT_TABLE).where(eq(STUDY_TYPE_CONTENT_TABLE.courseId, courseId));
     
