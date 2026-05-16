@@ -16,13 +16,13 @@ function FlashCardItem({ isFlipped, handleClick, flashCard }) {
       >
         {/* Front face */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-md"
+          className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-border bg-surface p-8 text-center shadow-md"
           style={{ backfaceVisibility: "hidden" }}
         >
-          <p className="text-lg font-medium text-gray-800 leading-relaxed">
+          <p className="text-lg font-medium text-foreground leading-relaxed">
             {flashCard?.front}
           </p>
-          <p className="mt-5 text-[10px] text-gray-400 tracking-wide">
+          <p className="mt-5 text-[10px] text-subtle tracking-wide">
             tap to reveal answer
           </p>
         </div>

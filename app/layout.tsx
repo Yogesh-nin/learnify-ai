@@ -5,6 +5,8 @@ import Provider from "./provider";
 import DashboardLayoutWrapper from "./dashboard/_components/DashboardLayoutWrapper";
 import { Toaster } from "sonner";
 import { CourseProvider } from "../context/CourseContext";
+import { ThemeProvider } from "./_components/ThemeProvider";
+import { AnimatedThemeToggler } from "./_components/AnimatedThemeToggler";
 
 export const metadata = {
   title: "Create Next App",
@@ -18,14 +20,15 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={outfit.className} suppressHydrationWarning>
-          <Provider>
-            <CourseProvider>
-            <DashboardLayoutWrapper>
-              {children}
-            </DashboardLayoutWrapper>
-            </CourseProvider>
-          </Provider>
-          <Toaster richColors position="top-right" />
+          <ThemeProvider>
+            <Provider>
+              <CourseProvider>
+                <DashboardLayoutWrapper>{children}</DashboardLayoutWrapper>
+              </CourseProvider>
+            </Provider>
+            <Toaster richColors position="top-right" />
+            <AnimatedThemeToggler />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

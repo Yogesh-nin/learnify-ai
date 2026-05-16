@@ -35,7 +35,7 @@ function SelectOption({selectedStudyType}) {
           <div
             key={index}
             onClick={() => {setSelectedOption(option.name);selectedStudyType(option.name)}}
-            className={`p-4 flex flex-col items-center justify-center border-2 border-gray-300 rounded-xl hover:border-primary cursor-pointer ${
+            className={`p-4 flex flex-col items-center justify-center border-2 border-border rounded-xl hover:border-primary cursor-pointer ${
               option?.name == selectedOption && "border-primary"
             }`}
           >

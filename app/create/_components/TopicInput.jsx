@@ -8,9 +8,9 @@ function TopicInput({setTopic, setDifficultyLevel}) {
   return (
     <div className='mt-10 w-full flex flex-col'>
         <h2 className=''>Enter topic or paster the content for which you want to generate study material</h2>
-        <textarea onChange={(event)=>setTopic(event.target.value)} className="textarea textarea-block bg-white text-black mt-2" placeholder="Start writing here"/>
+        <textarea onChange={(event)=>setTopic(event.target.value)} className="textarea textarea-block bg-surface text-foreground mt-2" placeholder="Start writing here"/>
         <h2 className='mt-5 mb-2'>Select the difficulty level</h2>
-        <select onChange={handleChange} className="select bg-white text-black">
+        <select onChange={handleChange} className="select bg-surface text-foreground">
             <option value="Easy">Easy</option> 
             <option value="Moderate">Moderate</option> 
             <option value="Hard">Hard</option>

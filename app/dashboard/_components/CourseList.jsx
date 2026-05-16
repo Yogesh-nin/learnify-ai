@@ -25,18 +25,18 @@ function CourseList() {
           ))}
         </div>
       ) : courseList.length === 0 ? (
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-gray-300 bg-white py-16 px-6 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-            <BookOpenIcon className="h-8 w-8 text-gray-400" />
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-border bg-surface py-16 px-6 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-surface-muted">
+            <BookOpenIcon className="h-8 w-8 text-subtle" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-700">No study material yet</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="text-lg font-semibold text-foreground">No study material yet</h3>
+            <p className="mt-1 text-sm text-muted">
               Get started by creating your first AI-powered course.
             </p>
           </div>
           <Link href="/create">
-            <button className="mt-2 rounded-lg bg-black px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition-colors">
+            <button className="mt-2 btn btn-primary px-5 py-2.5 text-sm">
               + Create Course
             </button>
           </Link>

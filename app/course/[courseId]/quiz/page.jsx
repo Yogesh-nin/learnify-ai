@@ -151,12 +151,12 @@ function GamifiedQuiz() {
       <div>
         <CourseBackButton className="mb-5" />
         <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-white shadow-lg rounded-lg p-8 animate-fade-in">
+        <div className="bg-surface shadow-lg rounded-lg p-8 animate-fade-in">
           <h1 className="text-3xl font-bold mb-4 text-center">
             Quiz Completed! 🎉
           </h1>
           <p className="text-lg mb-2 text-center">
-            You scored <span className="text-green-500 font-bold">{score}</span>{" "}
+            You scored <span className="text-success font-bold">{score}</span>{" "}
             out of {questions?.length * 10}.
           </p>
           <div className="text-center">
@@ -180,12 +180,12 @@ function GamifiedQuiz() {
           <p className="text-lg font-medium">
             Question {stepCount + 1} of {questions.length}
           </p>
-          <p className="text-lg font-medium text-red-500">Time: {timer}s</p>
-          <p className="text-lg font-medium text-green-500">Score: {score}</p>
+          <p className="text-lg font-medium text-destructive">Time: {timer}s</p>
+          <p className="text-lg font-medium text-success">Score: {score}</p>
         </div>
 
         <div className="mt-16 mb-10">
-          <p className="text-black text-2xl text-center">
+          <p className="text-foreground text-2xl text-center">
             {questions[stepCount].question}
           </p>
         </div>
@@ -217,7 +217,7 @@ function GamifiedQuiz() {
         {selectedOption && (
           <p
             className={`mt-3 ${
-              isCorrect ? "text-green-500" : "text-red-500"
+              isCorrect ? "text-success" : "text-destructive"
             } font-bold`}
           >
             {isCorrect

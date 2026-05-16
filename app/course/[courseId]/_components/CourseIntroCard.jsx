@@ -2,7 +2,7 @@ import React from "react";
 
 function CourseIntroCard({ course }) {
   return (
-    <div className="flex flex-col md:flex-row gap-6 items-center p-6 border shadow-md rounded-lg bg-gray-100 w-full mx-auto">
+    <div className="flex flex-col md:flex-row gap-6 items-center p-6 border shadow-md rounded-lg bg-surface-muted w-full mx-auto">
 
       <div className="w-[120px] flex flex-col justify-center items-center">
         <img
@@ -12,16 +12,16 @@ function CourseIntroCard({ course }) {
           height={70}
           className="mb-4"
         />
-        <h2 className="text-xs text-blue-600 font-semibold">
+        <h2 className="text-xs text-primary font-semibold">
           Total Chapters: {course?.courseLayout?.chapters?.length ?? 0}
         </h2>
       </div>
 
       <div className="flex flex-col justify-between">
-        <h2 className="font-bold text-xl text-gray-800">
+        <h2 className="font-bold text-xl text-foreground">
           {course?.courseLayout?.courseTitle ?? "Untitled Course"}
         </h2>
-        <p className="text-gray-600 text-sm mt-2">
+        <p className="text-muted text-sm mt-2">
           {course?.courseLayout?.courseSummary ?? ""}
         </p>
       </div>

@@ -42,7 +42,7 @@ export default function GenericModal({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/40" />
+          <div className="fixed inset-0 bg-overlay" />
         </TransitionChild>
 
         {/* Modal Container */}
@@ -56,30 +56,30 @@ export default function GenericModal({
             leaveFrom="opacity-100 scale-100 translate-y-0"
             leaveTo="opacity-0 scale-95 translate-y-2"
           >
-            <DialogPanel className="relative w-full max-w-[420px] bg-white rounded-2xl shadow-xl text-center overflow-hidden">
+            <DialogPanel className="relative w-full max-w-[420px] bg-surface rounded-2xl shadow-xl text-center overflow-hidden">
               
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute right-3 top-3 p-2 rounded-full bg-white hover:bg-gray-100"
+                className="absolute right-3 top-3 p-2 rounded-full bg-surface hover:bg-surface-muted"
               >
                 <X className="h-4 w-4" />
               </button>
 
               {/* Top Banner */}
               {icon && (
-                <div className="bg-[#FAEFE6] flex justify-center items-center py-6">
+                <div className="bg-modal-banner flex justify-center items-center py-6">
                   {icon}
                 </div>
               )}
 
               {/* Content */}
               <div className="px-6 py-6">
-                <DialogTitle className="text-[24px] font-bold text-[#1A1A1A] mb-2 px-1">
+                <DialogTitle className="text-[24px] font-bold text-modal-title mb-2 px-1">
                   {title}
                 </DialogTitle>
 
-                <Description className="text-[18px] text-[#707070] mb-6">
+                <Description className="text-[18px] text-muted mb-6">
                   {description}
                 </Description>
 

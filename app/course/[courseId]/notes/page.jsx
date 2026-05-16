@@ -44,14 +44,14 @@ function ViewNotes() {
     return (
       <>
         <CourseBackButton className="mb-5" />
-        <p className="text-center text-blue-500">Loading notes...</p>
+        <p className="text-center text-primary">Loading notes...</p>
       </>
     );
   if (error)
     return (
       <>
         <CourseBackButton className="mb-5" />
-        <p className="text-center text-red-500">{error}</p>
+        <p className="text-center text-destructive">{error}</p>
       </>
     );
 
@@ -60,11 +60,10 @@ function ViewNotes() {
     return (
       <div>
         <CourseBackButton className="mb-5" />
-        <div className="text-center text-gray-500 mt-20">
+        <div className="text-center text-muted mt-20">
         <p className="text-xl font-semibold">No notes available yet.</p>
         <p className="text-sm mt-2">
-          Notes are generated in the background. Make sure the Inngest dev server
-          is running, then wait a moment and refresh.
+          Notes are generated in the background. Wait a moment and refresh.
         </p>
         </div>
       </div>
@@ -98,9 +97,9 @@ function ViewNotes() {
     return (
       <div>
         <CourseBackButton className="mb-5" />
-        <div className="text-center text-red-500 mt-10 p-4">
+        <div className="text-center text-destructive mt-10 p-4">
         <p className="font-semibold">Failed to parse notes data for chapter {stepCount + 1}.</p>
-        <p className="text-sm mt-1 text-gray-500">
+        <p className="text-sm mt-1 text-muted">
           The stored content may not be valid JSON. Check the Inngest logs and regenerate the course.
         </p>
         </div>
@@ -126,7 +125,7 @@ function ViewNotes() {
             <div
               key={index}
               className={`w-full h-2 rounded-full ${
-                index <= stepCount ? "bg-primary" : "bg-gray-300"
+                index <= stepCount ? "bg-primary" : "bg-surface-hover"
               }`}
             ></div>
           ))}
@@ -148,12 +147,12 @@ function ViewNotes() {
             <span className="pr-3">{jsonObject.emoji}</span>
             {jsonObject.chapterTitle}
           </div>
-          <p className="text-gray-700 mb-5">{jsonObject.chapterSummary}</p>
+          <p className="text-foreground mb-5">{jsonObject.chapterSummary}</p>
 
           {jsonObject.topics.map((topic, index) => (
             <div
               key={index}
-              className="p-4 bg-gray-100 rounded-lg shadow-md mb-4"
+              className="p-4 bg-surface-muted rounded-lg shadow-md mb-4"
             >
               <h1 className="text-lg font-bold mb-2">{topic.topicTitle}</h1>
               {/* Render Markdown Content */}

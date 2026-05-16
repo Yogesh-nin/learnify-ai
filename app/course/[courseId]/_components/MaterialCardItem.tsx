@@ -114,7 +114,7 @@ function MaterialCardItem({ item, studyTypeContent, course, refreshData }) {
   return (
     <Link href={`/course/${course.courseId}${item.path}`}>
       <div
-        className={`border shadow-md rounded-lg bg-gray-100 p-5 h-full flex flex-col items-center justify-between ${
+        className={`border shadow-md rounded-lg bg-surface-muted p-5 h-full flex flex-col items-center justify-between ${
           !isContentGenerated ? "grayscale" : ""
         }`}
       >
@@ -122,14 +122,14 @@ function MaterialCardItem({ item, studyTypeContent, course, refreshData }) {
           className={`p-1 px-2 rounded-full text-[10px] mb-2 ${
             isContentGenerated
               ? "bg-green-500 text-white"
-              : "bg-gray-500 text-white"
+              : "bg-subtle text-foreground"
           }`}
         >
           {isContentGenerated ? "Ready" : "Generate"}
         </h2>
         <img src={item.icon} alt={item.name} width={50} height={50} />
         <h2 className="font-medium mt-3">{item.name}</h2>
-        <h2 className="text-gray-500 text-sm text-center">{item.desc}</h2>
+        <h2 className="text-muted text-sm text-center">{item.desc}</h2>
         {!isContentGenerated ? (
           <button
             className="btn btn-block btn-outline-primary mt-3 hover:cursor-pointer"

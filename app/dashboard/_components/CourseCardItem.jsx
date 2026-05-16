@@ -20,7 +20,7 @@ function CourseCardItem({ course }) {
 
   return (
     <>
-      <div className="p-4 w-full border rounded-lg shadow-md bg-gray-100">
+      <div className="p-4 w-full border rounded-lg shadow-md bg-surface-muted">
         <div className="flex flex-col justify-between h-full">
           <div className="h-full">
             <div className="flex items-center mb-4">
@@ -36,7 +36,7 @@ function CourseCardItem({ course }) {
               </h2>
             </div>
 
-            <div className="text-sm mt-3 text-gray-600 bg-[#ededed] py-5 px-3 rounded-lg">
+            <div className="text-sm mt-3 text-muted bg-background py-5 px-3 rounded-lg">
               <p className="line-clamp-4">
                 {course.courseLayout?.courseSummary ?? ""}
               </p>
@@ -49,7 +49,7 @@ function CourseCardItem({ course }) {
                 <Loader />
               </div>
             ) : course.status === "Failed" ? (
-              <p className="text-sm text-red-500">Generation failed — delete and recreate</p>
+              <p className="text-sm text-destructive">Generation failed — delete and recreate</p>
             ) : (
               <>
                 <Link href={`course/${course.courseId}`}>
@@ -64,7 +64,7 @@ function CourseCardItem({ course }) {
                   <button
                     onClick={() => setDeleteOpen(true)}
                     disabled={deleting}
-                    className="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="p-2 rounded-lg text-muted hover:text-red-600 hover:bg-red-50 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                     aria-label="Delete course"
                   >
                     {deleting ? (
@@ -73,7 +73,7 @@ function CourseCardItem({ course }) {
                       <Trash2 size={18} />
                     )}
                   </button>
-                  <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                  <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap rounded bg-foreground px-2 py-1 text-xs text-background opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     Delete
                   </span>
                 </div>

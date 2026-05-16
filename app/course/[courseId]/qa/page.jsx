@@ -51,14 +51,14 @@ function ViewQA() {
     return (
       <>
         <CourseBackButton className="mb-5" />
-        <p className="text-center text-blue-500">Loading questions...</p>
+        <p className="text-center text-primary">Loading questions...</p>
       </>
     );
   if (error)
     return (
       <>
         <CourseBackButton className="mb-5" />
-        <p className="text-center text-red-500">{error}</p>
+        <p className="text-center text-destructive">{error}</p>
       </>
     );
 
@@ -80,7 +80,7 @@ function ViewQA() {
             <div
               key={index}
               className={`w-full h-2 rounded-full ${
-                index <= stepCount ? "bg-primary" : "bg-gray-300"
+                index <= stepCount ? "bg-primary" : "bg-surface-hover"
               }`}
             ></div>
           ))}
@@ -110,7 +110,7 @@ function ViewQA() {
 
           {/* Smoothly toggle the answer inside a container */}
           <div
-            className={`transition-all duration-500 ease-in-out overflow-hidden bg-white p-4 rounded-md shadow-md`}
+            className={`transition-all duration-500 ease-in-out overflow-hidden bg-surface p-4 rounded-md shadow-md`}
             style={{
               maxHeight: showAnswer ? "1000px" : "0", // Transition max height
               opacity: showAnswer ? "1" : "0", // Transition opacity

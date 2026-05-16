@@ -84,19 +84,19 @@ function Flashcards() {
 
       {/* Header */}
       <div className=" text-center mb-10">
-        <p className="text-xs tracking-widest uppercase text-gray-400 mb-1">
+        <p className="text-xs tracking-widest uppercase text-subtle mb-1">
           study tool
         </p>
-        <h2 className="text-3xl font-bold text-gray-800">Flashcards</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-3xl font-bold text-foreground">Flashcards</h2>
+        <p className="text-sm text-muted mt-1">
           Help you to remember your concepts
         </p>
       </div>
 
       {loading ? (
-        <div className="w-[380px] max-w-[90vw] h-[260px] rounded-2xl bg-gray-200 animate-pulse" />
+        <div className="w-[380px] max-w-[90vw] h-[260px] rounded-2xl bg-surface-muted animate-pulse" />
       ) : cards.length === 0 ? (
-        <p className="text-gray-500">No flashcards found.</p>
+        <p className="text-muted">No flashcards found.</p>
       ) : (
         <>
           {/* Card with slide-up animation */}
@@ -130,7 +130,7 @@ function Flashcards() {
                   className={`h-1.5 rounded-full cursor-pointer transition-all duration-300 ${
                     i === currentIndex
                       ? "w-5 bg-primary"
-                      : "w-1.5 bg-gray-300 hover:bg-gray-400"
+                      : "w-1.5 bg-surface-hover hover:bg-surface-hover"
                   }`}
                   aria-label={`Go to card ${i + 1}`}
                 />
@@ -148,10 +148,10 @@ function Flashcards() {
           </div>
 
           {/* Counter & hint */}
-          <p className="text-xs text-gray-400 mt-3 tracking-wide">
+          <p className="text-xs text-subtle mt-3 tracking-wide">
             {currentIndex + 1} / {cards.length}
           </p>
-          <p className="text-[10px] text-gray-900 mt-6 tracking-wide">
+          <p className="text-[10px] text-foreground mt-6 tracking-wide">
             ← → navigate · space or click to flip
           </p>
         </>

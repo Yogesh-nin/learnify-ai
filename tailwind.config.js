@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,6 +11,23 @@ module.exports = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        surface: "var(--surface)",
+        "surface-muted": "var(--surface-muted)",
+        "surface-hover": "var(--surface-hover)",
+        border: "var(--border)",
+        "border-muted": "var(--border-muted)",
+        muted: "var(--text-muted)",
+        subtle: "var(--text-subtle)",
+        overlay: "var(--overlay)",
+        "accent-banner": "var(--accent-banner)",
+        "accent-banner-foreground": "var(--accent-banner-foreground)",
+        "modal-banner": "var(--modal-banner)",
+        "modal-title": "var(--modal-title)",
+        primary: "var(--primary)",
+        "primary-foreground": "var(--primary-foreground)",
+        destructive: "var(--destructive)",
+        success: "var(--success)",
+        "card-flip-back": "var(--card-flip-back)",
       },
       keyframes: {
         pulseScale: {

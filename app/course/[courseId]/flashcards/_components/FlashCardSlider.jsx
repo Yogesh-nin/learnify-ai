@@ -16,7 +16,7 @@ const StyledSwiper = styled.div`
   .swiper-slide {
     text-align: center;
     font-size: 18px;
-    background: #ededed;
+    background: var(--background);
     display: flex;
     justify-content: center;
     align-items: center;
