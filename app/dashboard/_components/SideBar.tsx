@@ -20,16 +20,6 @@ function SideBar({ onClose }: SideBarProps) {
       icon: LayoutDashboard,
       path: '/dashboard',
     },
-    {
-      name: 'MathAi',
-      icon: LeafyGreenIcon,
-      path: 'http://localhost:5173/',
-    },
-    {
-      name: 'Profile',
-      icon: UserCircle,
-      path: '/dashboard/profile',
-    },
   ];
 
   return (

@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import CourseBackButton from "../_components/CourseBackButton";
 
 function GamifiedQuiz() {
   const { courseId } = useParams();
@@ -120,10 +121,13 @@ function GamifiedQuiz() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div>
+        <CourseBackButton className="mb-5" />
+        <div className="flex justify-center items-center min-h-[50vh]">
         <div className="text-center">
           <div className="animate-spin w-10 h-10 border-4 border-primary rounded-full border-t-transparent"></div>
           <p>Loading Quiz...</p>
+        </div>
         </div>
       </div>
     );
@@ -131,8 +135,11 @@ function GamifiedQuiz() {
 
   if (!quizData || !quizData.content || !quizData.content.questions?.length) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p>No Quiz Data Available</p>
+      <div>
+        <CourseBackButton className="mb-5" />
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <p>No Quiz Data Available</p>
+        </div>
       </div>
     );
   }
@@ -141,7 +148,9 @@ function GamifiedQuiz() {
 
   if (quizCompleted) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div>
+        <CourseBackButton className="mb-5" />
+        <div className="flex items-center justify-center min-h-[50vh]">
         <div className="bg-white shadow-lg rounded-lg p-8 animate-fade-in">
           <h1 className="text-3xl font-bold mb-4 text-center">
             Quiz Completed! 🎉
@@ -156,12 +165,14 @@ function GamifiedQuiz() {
             </button>
           </div>
         </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="h-screen p-5">
+      <CourseBackButton className="mb-5" />
       <h1 className="text-3xl font-bold mb-5 text-center">{quizTitle}</h1>
 
       <div className="mb-5">

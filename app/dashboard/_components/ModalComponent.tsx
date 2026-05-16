@@ -88,14 +88,14 @@ export default function GenericModal({
                   {actions?.map((action, idx) => (
                     <button
                       key={idx}
+                      type="button"
                       onClick={action.onClick}
-                      className={`w-full rounded-xl py-3 text-[16px] font-semibold flex items-center justify-center
-                        ${
-                          action.variant === "outlined"
-                            ? "bg-[conic-gradient(#FFE8CCAD)] text-[#C88D4A] border border-[#E6E6E6] hover:bg-gray-50"
-                            : "bg-[conic-gradient(from_0deg,_#CA924E,_#CF8C3A)] text-white hover:bg-[#C88D4A]"
-                        }
-                      `}
+                      disabled={action.isLoading}
+                      className={`btn w-full flex items-center justify-center ${
+                        action.variant === "outlined"
+                          ? "btn-outline-primary"
+                          : "btn-primary"
+                      }`}
                     >
                       {action.isLoading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />

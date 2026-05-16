@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import CourseBackButton from "../_components/CourseBackButton";
 
 function ViewQA() {
   const [qaData, setQaData] = useState([]);
@@ -48,12 +49,22 @@ function ViewQA() {
 
   if (loading)
     return (
-      <div className="text-center text-blue-500">Loading questions...</div>
+      <>
+        <CourseBackButton className="mb-5" />
+        <p className="text-center text-blue-500">Loading questions...</p>
+      </>
     );
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (error)
+    return (
+      <>
+        <CourseBackButton className="mb-5" />
+        <p className="text-center text-red-500">{error}</p>
+      </>
+    );
 
   return (
     <div className="h-screen">
+      <CourseBackButton className="mb-5" />
       {/* Navigation */}
       <div className="flex gap-5 items-center mb-5">
         <button

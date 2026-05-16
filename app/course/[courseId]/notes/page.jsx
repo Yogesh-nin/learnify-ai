@@ -5,6 +5,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import CourseBackButton from "../_components/CourseBackButton";
 
 function ViewNotes() {
   const { courseId } = useParams();
@@ -40,18 +41,32 @@ function ViewNotes() {
   };
 
   if (loading)
-    return <div className="text-center text-blue-500">Loading notes...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+    return (
+      <>
+        <CourseBackButton className="mb-5" />
+        <p className="text-center text-blue-500">Loading notes...</p>
+      </>
+    );
+  if (error)
+    return (
+      <>
+        <CourseBackButton className="mb-5" />
+        <p className="text-center text-red-500">{error}</p>
+      </>
+    );
 
   // CHAPTER_NOTES_TABLE is empty – notes haven't been generated yet
   if (!notes || notes.length === 0) {
     return (
-      <div className="text-center text-gray-500 mt-20">
+      <div>
+        <CourseBackButton className="mb-5" />
+        <div className="text-center text-gray-500 mt-20">
         <p className="text-xl font-semibold">No notes available yet.</p>
         <p className="text-sm mt-2">
           Notes are generated in the background. Make sure the Inngest dev server
           is running, then wait a moment and refresh.
         </p>
+        </div>
       </div>
     );
   }
@@ -81,17 +96,21 @@ function ViewNotes() {
   } catch (err) {
     console.error("Error parsing JSON:", err.message);
     return (
-      <div className="text-center text-red-500 mt-10 p-4">
+      <div>
+        <CourseBackButton className="mb-5" />
+        <div className="text-center text-red-500 mt-10 p-4">
         <p className="font-semibold">Failed to parse notes data for chapter {stepCount + 1}.</p>
         <p className="text-sm mt-1 text-gray-500">
           The stored content may not be valid JSON. Check the Inngest logs and regenerate the course.
         </p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen">
+      <CourseBackButton className="mb-5" />
       {/* Navigation */}
       <div className="flex gap-5 items-center mb-5">
         <button

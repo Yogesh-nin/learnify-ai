@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import FlashcardItem from "./_components/FlashcardItem";
+import CourseBackButton from "../_components/CourseBackButton";
 
 function Flashcards() {
   const { courseId } = useParams();
@@ -76,7 +77,11 @@ function Flashcards() {
   const card = cards[currentIndex];
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
+      <div className="w-full mb-6">
+        <CourseBackButton />
+      </div>
+
       {/* Header */}
       <div className=" text-center mb-10">
         <p className="text-xs tracking-widest uppercase text-gray-400 mb-1">
