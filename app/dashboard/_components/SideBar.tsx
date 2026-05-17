@@ -1,6 +1,6 @@
 ﻿"use client"
 import React, { useState } from 'react'
-import { BookOpen, ChevronDown, ChevronRight, LayoutDashboard, LeafyGreenIcon, UserCircle, X } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronRight, LayoutDashboard, LeafyGreenIcon, NotebookPen, UserCircle, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useCourses } from '../../../context/CourseContext';
@@ -20,13 +20,18 @@ function SideBar({ onClose }: SideBarProps) {
       icon: LayoutDashboard,
       path: '/dashboard',
     },
+    {
+      name: 'Notes',
+      icon: NotebookPen,
+      path: '/notes',
+    },
   ];
 
   return (
     <div className="h-screen shadow-md p-5 flex flex-col bg-surface">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
-          <img src="/logo-main.png" alt="logo" width={40} height={40} />
+          <img src="/logo-main.svg" alt="logo" width={40} height={40} />
           <h2 className="font-bold text-2xl">Learnify</h2>
         </div>
         {onClose && (

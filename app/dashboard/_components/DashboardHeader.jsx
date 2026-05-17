@@ -12,7 +12,7 @@ function DashboardHeader({ onMenuClick }) {
         <Menu size={30} />
       </button>
       <div className="flex gap-2 items-center md:hidden">
-        <img src="/logo-main.png" alt="logo" width={40} height={40} />
+        <img src="/logo-main.svg" alt="logo" width={40} height={40} />
         <h2 className="font-bold text-2xl">Learnify</h2>
       </div>
       <div className="flex-1 flex justify-end items-center">

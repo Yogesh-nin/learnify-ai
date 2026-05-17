@@ -1,8 +1,9 @@
 "use client";
-
+import dynamic from "next/dynamic";
 import React from "react";
-import CourseCardItem from "./CourseCardItem";
 import CourseCardSkeleton from "./CourseCardSkeleton";
+const CourseCardItem = dynamic(() => import("./CourseCardItem"), { ssr: false, loading: () => <CourseCardSkeleton /> });
+// import CourseCardItem from "./CourseCardItem";
 import { useCourses } from "../../../context/CourseContext";
 import Link from "next/link";
 import { BookOpenIcon } from "lucide-react";
