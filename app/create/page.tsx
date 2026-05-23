@@ -10,9 +10,16 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useCourses } from '../../context/CourseContext';
 
+interface formDataType {
+  studyType: string;
+  topic: string;
+  difficultyLevel: string;
+
+}
+
 function Create() {
     const [step, setStep] = useState(0);
-    const [formData, setFormData] = useState([])
+    const [formData, setFormData] = useState<formDataType>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const {user}=useUser();

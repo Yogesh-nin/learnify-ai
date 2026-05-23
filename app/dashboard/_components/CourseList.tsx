@@ -7,11 +7,12 @@ const CourseCardItem = dynamic(() => import("./CourseCardItem"), { ssr: false, l
 import { useCourses } from "../../../context/CourseContext";
 import Link from "next/link";
 import { BookOpenIcon } from "lucide-react";
+import PaginationControls from "../../_components/PaginationControls";
 
 const SKELETON_COUNT = 6;
 
 function CourseList() {
-  const { courseList, loading, error } = useCourses();
+  const { courseList, loading, error, pagination, fetchCourses } = useCourses();
 
   if (error) return <div>{error}</div>;
 
@@ -43,14 +44,21 @@ function CourseList() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-2 gap-3 md:gap-5">
-          {courseList.map((course, index) => (
-            <CourseCardItem
-              course={course}
-              key={course.courseId ?? index}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-2 gap-3 md:gap-5">
+            {courseList.map((course, index) => (
+              <CourseCardItem
+                course={course}
+                key={course.courseId ?? index}
+              />
+            ))}
+          </div>
+          <PaginationControls
+            pagination={pagination}
+            onPageChange={fetchCourses}
+            loading={loading}
+          />
+        </>
       )}
     </div>
   );

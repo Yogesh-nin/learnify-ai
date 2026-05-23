@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-function TopicInput({setTopic, setDifficultyLevel}) {
+const TopicInput = ({setTopic, setDifficultyLevel}) => {
     const [currentLevel, setCurrentLevel] = useState("Easy");
     const handleChange = (event) => {
       setDifficultyLevel(event.target.value);

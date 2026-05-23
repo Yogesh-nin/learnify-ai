@@ -16,6 +16,7 @@ const isProtectedApiRoute = createRouteMatcher([
   "/api/study-type(.*)",
   "/api/study-type-content(.*)",
   "/api/generate-course-outline(.*)",
+  "/api/notes(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

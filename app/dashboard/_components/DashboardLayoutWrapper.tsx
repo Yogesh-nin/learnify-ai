@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import SideBar from "./SideBar";
 import DashboardHeader from "./DashboardHeader";
 
@@ -10,9 +10,9 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const closeSidebar = () => {
+  const closeSidebar = useCallback(() => {
     setIsSidebarOpen(false);
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">

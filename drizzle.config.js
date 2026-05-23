@@ -4,13 +4,11 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 dotenv.config();
 
-const connectionString =
-  process.env.DATABASE_URL ||
-  process.env.NEXT_PUBLIC_DATABASE_CONNECTION_STRING;
+const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
   throw new Error(
-    "Database URL missing. Set DATABASE_URL (recommended) or NEXT_PUBLIC_DATABASE_CONNECTION_STRING in .env or .env.local"
+    "DATABASE_URL is not set. Add it to .env or .env.local for Drizzle CLI."
   );
 }
 

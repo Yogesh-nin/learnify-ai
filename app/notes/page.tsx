@@ -1,9 +1,5 @@
-const NotesPage = () => {
-    return (
-        <div>
-            <h1>Notes</h1>
-        </div>
-    )
-}
+import { redirect } from "next/navigation";
 
-export default NotesPage;
+export default function NotesRedirectPage() {
+  redirect("/dashboard/notes");
+}

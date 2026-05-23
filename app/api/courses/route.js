@@ -1,11 +1,13 @@
 import { db } from "/configs/db";
 import { STUDY_MATERIAL_TABLE, CHAPTER_NOTES_TABLE, STUDY_TYPE_CONTENT_TABLE } from "/configs/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { normalizeCourseLayout } from "/lib/courseLayout";
+import { parsePagination } from "/lib/pagination";
 import {
   getAuthenticatedUserEmail,
   getOwnedCourse,
+  listCoursesForUser,
 } from "/lib/courseAccess";
 
 function withNormalizedLayout(course) {
@@ -23,42 +25,41 @@ function withNormalizedLayout(course) {
   }
 }
 
-export async function POST(req) {
-  try {
-    const email = await getAuthenticatedUserEmail();
-    if (!email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const result = await db
-      .select()
-      .from(STUDY_MATERIAL_TABLE)
-      .where(eq(STUDY_MATERIAL_TABLE.createdBy, email))
-      .orderBy(desc(STUDY_MATERIAL_TABLE.id))
-
-    return NextResponse.json({
-      result: result.map(withNormalizedLayout),
-    });
-  } catch (error) {
-    console.error("Error fetching courses:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch courses. Please try again later." },
-      { status: 500 }
-    );
+async function getPaginatedCourses(req) {
+  const email = await getAuthenticatedUserEmail();
+  if (!email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const { searchParams } = new URL(req.url);
+  const { page, size, offset } = parsePagination(searchParams, {
+    defaultSize: 6,
+  });
+
+  const { courses, pagination } = await listCoursesForUser(email, {
+    page,
+    size,
+    offset,
+  });
+
+  return NextResponse.json({
+    result: courses.map(withNormalizedLayout),
+    pagination,
+  });
+}
+
+/** @deprecated Prefer GET /api/courses?page=&size= */
+export async function POST(req) {
+  return getPaginatedCourses(req);
 }
 
 export async function GET(req) {
   try {
-    const reqUrl = req.url;
-    const { searchParams } = new URL(reqUrl);
+    const { searchParams } = new URL(req.url);
     const courseId = searchParams.get("courseId");
 
     if (!courseId) {
-      return NextResponse.json(
-        { error: "The 'courseId' query parameter is required." },
-        { status: 400 }
-      );
+      return getPaginatedCourses(req);
     }
 
     const owned = await getOwnedCourse(courseId);

@@ -1,5 +1,6 @@
 import { UserButton } from "@clerk/nextjs";
 import { Menu } from "lucide-react";
+
 function DashboardHeader({ onMenuClick }) {
   return (
     <div className="p-5 shadow-md flex justify-between items-center bg-surface border-b border-border">

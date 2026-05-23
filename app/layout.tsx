@@ -3,11 +3,11 @@ import { Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import Provider from "./provider";
-import DashboardLayoutWrapper from "./dashboard/_components/DashboardLayoutWrapper";
 import { Toaster } from "sonner";
 import { CourseProvider } from "../context/CourseContext";
 import { ThemeProvider } from "./_components/ThemeProvider";
 import { AnimatedThemeToggler } from "./_components/AnimatedThemeToggler";
+import DashboardLayoutWrapper from "./dashboard/_components/DashboardLayoutWrapper";
 
 const appUrl =
   process.env.NEXT_PUBLIC_APP_URL ??

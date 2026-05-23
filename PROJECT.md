@@ -311,7 +311,7 @@ ai-lms-main/
 
 | Variable | Purpose |
 |----------|---------|
-| `DATABASE_URL` | Neon PostgreSQL connection string |
+| `DATABASE_URL` | Neon PostgreSQL connection string (server-only — never use `NEXT_PUBLIC_`) |
 | `NEXT_PUBLIC_CLERK_*` | Clerk publishable keys / URLs |
 | `CLERK_SECRET_KEY` | Clerk server secret |
 | `NEXT_PUBLIC_GEMINI_API_KEY` | Google Gemini API key |

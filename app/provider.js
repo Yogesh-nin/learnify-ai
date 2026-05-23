@@ -1,43 +1,35 @@
 "use client";
 
-import { db } from "../configs/db";
-import { USER_TABLE } from "../configs/schema";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
-import { eq } from "drizzle-orm";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 function Provider({ children }) {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+  const syncedRef = useRef(false);
 
   useEffect(() => {
-    if (user) {
-      CheckIsNewUser();
-    }
-  }, []);
+    if (!isLoaded || !user?.id || syncedRef.current) return;
 
-  const CheckIsNewUser = async () => {
-    const result = await db
-      .select()
-      .from(USER_TABLE)
-      .where(eq(USER_TABLE.email, user?.primaryEmailAddress?.emailAddress));
-    console.log(result);
-    if (result?.length == 0) {
-      const userResp = await db
-        .insert(USER_TABLE)
-        .values({
-          name: user?.fullName,
-          email: user?.primaryEmailAddress?.emailAddress,
-        })
-        .returning({ id: USER_TABLE.id });
-      console.log(userResp);
+    const syncKey = `clerk-user-synced:${user.id}`;
+    if (typeof sessionStorage !== "undefined" && sessionStorage.getItem(syncKey)) {
+      return;
     }
 
-    const resp = await axios.post('/api/create-user', {user: user})
-    console.log(resp.data)
+    syncedRef.current = true;
 
-  };
-  return <div>{children}</div>;
+    axios
+      .post("/api/create-user", { user })
+      .then(() => {
+        sessionStorage.setItem(syncKey, "1");
+      })
+      .catch((err) => {
+        console.error("Failed to sync user:", err);
+        syncedRef.current = false;
+      });
+  }, [isLoaded, user]);
+
+  return <>{children}</>;
 }
 
 export default Provider;

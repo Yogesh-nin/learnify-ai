@@ -6,8 +6,9 @@ import { Trash2 } from "lucide-react";
 import GenericModal from "./ModalComponent";
 import { DeleteIcon } from "../../_components/icons/DeleteIcon";
 import { useCourses } from "../../../context/CourseContext";
+import type { CourseInterface } from "../../interface/interface";
 
-function CourseCardItem({ course }) {
+const CourseCardItem: React.FC<{ course: CourseInterface }> = ({ course }) => {
   const { deleteCourse, deletingCourseId } = useCourses();
   const [deleteOpen, setDeleteOpen] = useState(false);
 
