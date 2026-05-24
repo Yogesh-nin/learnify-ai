@@ -1,4 +1,3 @@
-
 import {
   pgTable,
   serial,
@@ -23,26 +22,26 @@ export const STUDY_MATERIAL_TABLE = pgTable("studyMaterial", {
   courseId: varchar().notNull(),
   courseType: varchar().notNull(),
   topic: varchar().notNull(),
-  difficultyLevel: varchar().default("Easy"),
-  courseLayout: json(),
+  difficultyLevel: varchar().notNull(),
+  courseLayout: json().notNull(),
   createdBy: varchar().notNull(),
-  status: varchar().default('Generating')
+  status: varchar().notNull(),
 });
 
-export const CHAPTER_NOTES_TABLE = pgTable('chapterNotes', {
-    id: serial().primaryKey(),
-    courseId: varchar().notNull(),
-    chapterId: integer().notNull(),
-    notes: text()
-})
+export const CHAPTER_NOTES_TABLE = pgTable("chapterNotes", {
+  id: serial().primaryKey(),
+  courseId: varchar().notNull(),
+  chapterId: integer().notNull(),
+  notes: text().notNull(),
+});
 
-export const STUDY_TYPE_CONTENT_TABLE = pgTable('studyTypeContent', {
+export const STUDY_TYPE_CONTENT_TABLE = pgTable("studyTypeContent", {
   id: serial().primaryKey(),
   courseId: varchar().notNull(),
   content: json(),
   type: varchar().notNull(),
-  status: varchar().default('Generating')
-})
+  status: varchar().notNull(),
+});
 
 export const PERSONAL_NOTES_TABLE = pgTable("personalNotes", {
   noteId: uuid("noteId").primaryKey(),

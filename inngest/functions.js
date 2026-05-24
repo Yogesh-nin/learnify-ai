@@ -35,7 +35,7 @@ export const CreateNewUser = inngest.createFunction(
     const result = await step.run(
       "Check User and Create if Not in DB",
       async () => {
-        const { ensureUserInDb } = await import("../lib/ensureUser.js");
+        const { ensureUserInDb } = await import("../lib/ensureUser.ts");
         return ensureUserInDb(user);
       }
     );

@@ -1,7 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { ensureUserInDb } from "../../../lib/ensureUser.js";
 import { inngest } from "../../../inngest/client";
+import { ensureUserInDb } from "@/lib/ensureUser";
 
 export async function POST(req: Request) {
   try {

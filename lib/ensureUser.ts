@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
-import { db } from "/configs/db";
-import { USER_TABLE } from "/configs/schema";
-
+import { db } from "@/configs/db";
+import { USER_TABLE} from "@/configs/schema";
 /**
  * Ensures a Clerk user exists in the users table (server-only).
  * @param {import("@clerk/nextjs/server").User | { fullName?: string | null; primaryEmailAddress?: { emailAddress?: string } | null }} user

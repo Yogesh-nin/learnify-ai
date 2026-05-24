@@ -1,9 +1,9 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { and, count, desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { db } from "/configs/db";
-import { STUDY_MATERIAL_TABLE } from "/configs/schema";
-import { buildPaginationMeta } from "/lib/pagination";
+import { db } from "@/configs/db";
+import { STUDY_MATERIAL_TABLE } from "@/configs/schema";
+import { buildPaginationMeta } from "./pagination";
 
 /** Signed-in user's email (matches `createdBy` on courses). */
 export async function getAuthenticatedUserEmail() {

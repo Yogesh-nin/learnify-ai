@@ -4,14 +4,25 @@ import { eq } from "drizzle-orm";
 import { normalizeCourseLayout, stripJsonFences } from "./courseLayout";
 import { generateNotesAiModel } from "../configs/AiModel";
 
-export async function setCourseStatus(courseId, status) {
+type NormalizedChapter = ReturnType<
+  typeof normalizeCourseLayout
+>["chapters"][number];
+
+export type CourseForChapterNotes = {
+  courseId: string;
+  topic?: string;
+  difficultyLevel?: string;
+  courseLayout?: unknown;
+};
+
+export async function setCourseStatus(courseId: string, status: string) {
   await db
     .update(STUDY_MATERIAL_TABLE)
     .set({ status })
     .where(eq(STUDY_MATERIAL_TABLE.courseId, courseId));
 }
 
-function buildChapterNotesPrompt(chapter) {
+function buildChapterNotesPrompt(chapter: NormalizedChapter) {
   return `Generate a JSON object that represents study notes for a course chapter. The JSON should meet the following requirements:
 0. Provided Chapters:
 ${JSON.stringify(chapter)}
@@ -29,7 +40,11 @@ content (string): Detailed content for the topic written in Md format, and ready
 **IMPORTANT** There should be an emoji. Output valid JSON only, no markdown fences.`;
 }
 
-async function generateNotesForChapter(chapter, courseId, index) {
+async function generateNotesForChapter(
+  chapter: NormalizedChapter,
+  courseId: string,
+  index: number
+) {
   const result = await generateNotesAiModel.sendMessage(
     buildChapterNotesPrompt(chapter)
   );
@@ -40,9 +55,11 @@ async function generateNotesForChapter(chapter, courseId, index) {
   try {
     parsedNotes = JSON.parse(aiResp);
   } catch (parseErr) {
+    const message =
+      parseErr instanceof Error ? parseErr.message : String(parseErr);
     console.error(
       `Chapter ${index} notes JSON parse failed, storing raw text:`,
-      parseErr.message
+      message
     );
     parsedNotes = aiResp;
   }
@@ -61,7 +78,9 @@ async function generateNotesForChapter(chapter, courseId, index) {
  * Generates chapter notes for all chapters and sets course status to Ready or Failed.
  * Used by Inngest (production) and Next.js after() (local dev).
  */
-export async function generateChapterNotesForCourse(course) {
+export async function generateChapterNotesForCourse(
+  course: CourseForChapterNotes
+) {
   const courseId = course.courseId;
 
   if (!courseId) {
@@ -102,11 +121,12 @@ export async function generateChapterNotesForCourse(course) {
         `[chapter-notes] Chapter ${index + 1}/${chapters.length} done for ${courseId}`
       );
     } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
       console.error(
         `[chapter-notes] Chapter ${index} failed for ${courseId}:`,
-        err?.message || err
+        message
       );
-      errors.push({ index, error: err?.message || String(err) });
+      errors.push({ index, error: message });
     }
   }
 
